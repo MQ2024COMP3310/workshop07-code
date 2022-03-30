@@ -1,11 +1,18 @@
 package workshop07_code;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.io.FileInputStream;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -13,16 +20,16 @@ import java.util.logging.Logger;
 /**
  *
  * @author comp3310 with input from sqlitetutorial.net
- * 
- * Note, this is not a fully correct solution to the week 5 workshop. 
- * It still contains quite a few issues to be found.
+ *
+ *         Note, this is not a fully correct solution to the week 5 workshop.
+ *         It still contains quite a few issues to be found.
  */
 public class App {
-
     static {
         // must set before the Logger
         // loads logging.properties from the classpath
-        try (FileInputStream logFile =new FileInputStream("resources/logging.properties")){// resources\logging.properties
+        try (FileInputStream logFile = new FileInputStream(
+                "resources/logging.properties")) { // resources\logging.properties
             LogManager.getLogManager().readConfiguration(logFile);
         } catch (SecurityException | IOException e1) {
             e1.printStackTrace();
@@ -33,8 +40,9 @@ public class App {
 
     /**
      * @param args the command line arguments
+     * @throws SQLException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args)  {
         SQLiteConnectionManager wordleDatabaseConnection = new SQLiteConnectionManager("words.db");
 
         wordleDatabaseConnection.createNewDatabase("words.db");
@@ -75,20 +83,27 @@ public class App {
             String guess = scanner.nextLine();
 
             while (!guess.equals("q")) {
-                System.out.println("You've guessed '" + guess+"'.");
-
-                if (wordleDatabaseConnection.isValidWord(guess)) { 
-                    System.out.println("Success! It is in the the list.\n");
-                }else{
-                    System.out.println("Sorry. This word is NOT in the the list.\n");
+                System.out.println("You've guessed '" + guess + "'.");
+                String sql = "SELECT count(id) as total FROM validWords WHERE word like'" + guess
+                        + "';";
+                String url = wordleDatabaseConnection.getDatabaseURL();
+                try (Connection conn = DriverManager.getConnection(url);
+                        PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    ResultSet resultRows = stmt.executeQuery();
+                    if (resultRows.next() && resultRows.getInt("total")>0) {
+                        System.out.println("Success! It is in the the list.\n");
+                    } else {
+                        System.out.println("Sorry. This word is NOT in the the list.\n");
+                    }
+                } catch (SQLException e) {
+                    logger.log(Level.WARNING, e.getMessage());
                 }
 
-                System.out.print("Enter a 4 letter word for a guess or q to quit: " );
+                System.out.print("Enter a 4 letter word for a guess or q to quit: ");
                 guess = scanner.nextLine();
             }
         } catch (NoSuchElementException | IllegalStateException e) {
             logger.log(Level.WARNING, "Could not read.", e);
         }
-
     }
 }

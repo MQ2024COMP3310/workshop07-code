@@ -50,6 +50,10 @@ public class SQLiteConnectionManager {
         databaseURL = "jdbc:sqlite:sqlite/" + fileName;
     }
 
+    public String getDatabaseURL(){
+
+        return databaseURL;
+    }
     /**
      * Connect to a sample database
      *
@@ -145,24 +149,5 @@ public class SQLiteConnectionManager {
      * @param guess the string to check if it is a valid word.
      * @return true if guess exists in the database, false otherwise
      */
-    public boolean isValidWord(String guess) {
-        String sql = "SELECT count(id) as total FROM validWords WHERE word like'" + guess + "';";
-
-        try (Connection conn = DriverManager.getConnection(databaseURL);
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            ResultSet resultRows = stmt.executeQuery();
-            if (resultRows.next()) {
-                int result = resultRows.getInt("total");
-                return (result >= 1);
-            }
-
-            return false;
-
-        } catch (SQLException e) {
-            logger.log(Level.WARNING, e.getMessage());
-            return false;
-        }
-
-    }
+   
 }
