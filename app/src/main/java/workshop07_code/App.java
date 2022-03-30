@@ -1,4 +1,4 @@
-package workshop06_code;
+package workshop07_code;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
