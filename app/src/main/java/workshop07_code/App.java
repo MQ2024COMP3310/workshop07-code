@@ -1,3 +1,8 @@
+/*
+This versio is intentionally worse that the pervious version. 
+t is poorly structured, and contains injection attacks.
+*/
+
 package workshop07_code;
 
 import java.io.BufferedReader;
