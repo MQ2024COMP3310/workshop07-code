@@ -18,7 +18,7 @@ public class SQLiteConnectionManager {
     static {
         // must set before the Logger
         // loads logging.properties from the classpath
-        try (FileInputStream logFile =new FileInputStream("resources/logging.properties")){// resources\logging.properties
+        try (FileInputStream logFile = new FileInputStream("resources/logging.properties")) {// resources\logging.properties
             LogManager.getLogManager().readConfiguration(logFile);
         } catch (SecurityException | IOException e1) {
             e1.printStackTrace();
@@ -129,12 +129,10 @@ public class SQLiteConnectionManager {
      */
     public void addValidWord(int id, String word) {
 
-        String sql = "INSERT INTO validWords(id,word) VALUES(?,?)";
+        String sql = "INSERT INTO validWords(id,word) VALUES('" + id + "','" + word + "')";
 
         try (Connection conn = DriverManager.getConnection(databaseURL);
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            pstmt.setString(2, word);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, e.getMessage());
@@ -148,12 +146,12 @@ public class SQLiteConnectionManager {
      * @return true if guess exists in the database, false otherwise
      */
     public boolean isValidWord(String guess) {
-        String sql = "SELECT count(id) as total FROM validWords WHERE word like ?;";
+        String sql = "SELECT count(id) as total FROM validWords WHERE word like'" + guess + "';";
 
         try (Connection conn = DriverManager.getConnection(databaseURL);
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, guess);
-            ResultSet resultRows = pstmt.executeQuery();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            ResultSet resultRows = stmt.executeQuery();
             if (resultRows.next()) {
                 int result = resultRows.getInt("total");
                 return (result >= 1);
@@ -162,7 +160,7 @@ public class SQLiteConnectionManager {
             return false;
 
         } catch (SQLException e) {
-            System.out.println("Warning" + e.getMessage());
+            logger.log(Level.WARNING, e.getMessage());
             return false;
         }
 
