@@ -1,26 +1,11 @@
-*.class
-app/bin/main/workshop06_code/App.class
-app/bin/main/workshop06_code/SQLiteConnectionManager.class
 hello_logger.log.*
 app/hello_logger.log.*
 *.class
 *.jar
 *.war
 *.ear
-# generated files
-bin/**
-gen/**
-# project based files
 .idea/
 *.iml
 *.ipr
 *.iws
-.gradletasknamecache
-.gradle/
-build/
-bin/
-.gradle/7.3.3/executionHistory/executionHistory.bin
-.gradle/7.3.3/executionHistory/executionHistory.lock
-.gradle/7.3.3/fileHashes/fileHashes.bin
-.gradle/7.3.3/fileHashes/fileHashes.lock
-.gradle/buildOutputCleanup/buildOutputCleanup.lock
+
