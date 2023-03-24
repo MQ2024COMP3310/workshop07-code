@@ -5,8 +5,17 @@
  * @id java/example/empty-block
  */
 
-import java
 
-from BlockStmt b
-where b.getNumStmt() = 0
-select b, "This is an empty block."
+ import java
+
+ from LoopStmt loop,  MethodAccess callPrint
+ where
+     loop.getAChild*() = callPrint.getEnclosingStmt() and  
+       callPrint.getMethod().hasName("println") and
+       callPrint.getMethod().getDeclaringType().hasQualifiedName("java.io", "PrintStream") and
+       not exists(MethodAccess callScan|
+           loop.getAChild*() = callScan.getEnclosingStmt() and 
+           callScan.getMethod().hasName("nextLine") and
+           callScan.getMethod().getDeclaringType().hasQualifiedName("java.util", "Scanner")
+       )
+ select callPrint, "This prints in a loop without a scanner."
