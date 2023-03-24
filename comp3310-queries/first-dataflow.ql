@@ -1,6 +1,6 @@
 /**
  * @name First data flow example
- * @kind path-problem
+ * @kind problem
  * @problem.severity warning
  * @id java/example/source-sink
  */
